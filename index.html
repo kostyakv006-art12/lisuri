@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>История бесконечной любви, которая идёт 10 месяцев</title>
+  <meta name="description" content="История бесконечной любви, которая идёт 10 месяцев — 11.12.2025 — 11.10.2026">
+  <meta name="theme-color" content="#E8B4B8">
+  <link rel="icon" type="image/svg+xml" href="assets/cursor-fallback.svg">
+  <!-- Единственная внешняя зависимость — Google Fonts (Caveat, Great Vibes, Manrope: все с кириллицей) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Great+Vibes&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/задний фон.webp" type="image/webp">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="player.css">
+</head>
+<body>
+  <a class="skip-link" href="#story">Перейти к истории</a>
+
+  <!-- ФОН: три фиксированных слоя, которые растворяются друг в друге при прокрутке (см. style.css → «ФОН») -->
+  <div class="bg" aria-hidden="true">
+    <div class="bg__layer" data-bg="0"></div>
+    <div class="bg__layer" data-bg="1"></div>
+    <div class="bg__layer" data-bg="2"></div>
+    <div class="bg__veil"></div>
+  </div>
+
+  <!-- Лепестки и сердечки на переднем плане (canvas) -->
+  <canvas class="petals" id="petals" aria-hidden="true"></canvas>
+  <!-- Шлейф из фото за курсором (только устройства с мышью) -->
+  <div class="trail" id="trail" aria-hidden="true"></div>
+
+  <header class="topbar" id="topbar">
+    <a class="topbar__logo" href="#hero" aria-label="В начало">🦊<span aria-hidden="true">♥</span>🧸</a>
+    <nav class="topbar__nav" aria-label="Разделы">
+      <a href="#story">История</a>
+      <a href="#notes">Записки</a>
+      <a href="#gallery">Галерея</a>
+      <a href="#music">Музыка</a>
+      <a href="#final">Финал</a>
+    </nav>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Включить тёмную тему">🌙</button>
+  </header>
+
+  <main>
+    <!-- 1. HERO -->
+    <section class="hero" id="hero" aria-labelledby="heroTitle">
+      <div class="hero__card card">
+        <p class="hero__eyebrow anim-in" style="--d:.1s">11.12.2025 — 11.10.2026</p>
+        <h1 class="hero__title anim-in" id="heroTitle" style="--d:.25s" data-site-title>История бесконечной любви, которая идёт 10 месяцев</h1>
+        <p class="hero__subtitle anim-in" style="--d:.45s">10 месяцев — бесконечная любовь</p>
+
+        <div class="anim-in" style="--d:.65s">
+          <p class="counter__label">Мы вместе уже</p>
+          <div class="counter" id="counterTogether" role="timer" aria-live="off">
+            <div class="counter__cell"><span class="counter__num" data-unit="days">0</span><span class="counter__unit" data-label="days">дней</span></div>
+            <div class="counter__cell"><span class="counter__num" data-unit="hours">00</span><span class="counter__unit" data-label="hours">часов</span></div>
+            <div class="counter__cell"><span class="counter__num" data-unit="minutes">00</span><span class="counter__unit" data-label="minutes">минут</span></div>
+            <div class="counter__cell"><span class="counter__num" data-unit="seconds">00</span><span class="counter__unit" data-label="seconds">секунд</span></div>
+          </div>
+        </div>
+        <p class="hero__since anim-in" style="--d:.8s">С 11.12.2025 — бесконечная история любви</p>
+        <p class="hero__ten anim-in" style="--d:.9s" id="tenMonths">До 11.10.2026: …</p>
+        <a class="btn btn--pulse anim-in" style="--d:1.05s" href="#story">Листать наши воспоминания ↓</a>
+      </div>
+    </section>
+
+    <!-- 2. НАША ИСТОРИЯ -->
+    <section class="section" id="story" aria-labelledby="storyTitle">
+      <header class="section__head card card--soft reveal">
+        <span class="section__kicker">глава за главой</span>
+        <h2 id="storyTitle">Наша история</h2>
+        <p>Каждое фото — страничка из нашего дневника, каждое видео — живое воспоминание.</p>
+      </header>
+      <ol class="timeline" id="timeline"></ol>
+    </section>
+
+    <!-- 3. ЗАПИСКИ (главная фишка) -->
+    <section class="section" id="notes" aria-labelledby="notesTitle">
+      <header class="section__head card card--soft reveal">
+        <span class="section__kicker">нажми на любую</span>
+        <h2 id="notesTitle">Секретные записки</h2>
+        <p>Маленькие послания, спрятанные специально для тебя. Переверни каждую 💌</p>
+      </header>
+      <div class="notes" id="notesBoard"></div>
+    </section>
+
+    <!-- 4. ГАЛЕРЕЯ -->
+    <section class="section" id="gallery" aria-labelledby="galleryTitle">
+      <header class="section__head card card--soft reveal">
+        <span class="section__kicker">наш альбом</span>
+        <h2 id="galleryTitle">Галерея</h2>
+        <p>Все наши кадры на одной странице. Нажми на фото, чтобы рассмотреть поближе.</p>
+      </header>
+      <div class="gallery" id="photoGrid"></div>
+
+      <div class="heart-sep reveal" aria-hidden="true"><span>♥</span></div>
+      <h3 class="subhead reveal">Наши видео</h3>
+      <div class="video-grid" id="videoGrid"></div>
+    </section>
+
+    <!-- 5. ПЛЕЙЛИСТ -->
+    <section class="section" id="music" aria-labelledby="musicTitle">
+      <header class="section__head card card--soft reveal">
+        <span class="section__kicker">саундтрек наших 10 месяцев</span>
+        <h2 id="musicTitle">Наш плейлист</h2>
+        <p>Нажми на любую песню — они будут играть по очереди, а сверху появится плеер.</p>
+      </header>
+      <div class="playlist card reveal">
+        <div class="playlist__embed" id="playlistEmbed" hidden></div>
+        <ol class="tracks" id="tracks"></ol>
+      </div>
+    </section>
+
+    <!-- 6. ОБРАТНЫЙ ОТСЧЁТ -->
+    <section class="section" id="countdown" aria-labelledby="countdownTitle">
+      <div class="countdown card reveal">
+        <span class="section__kicker" id="countdownKicker">до следующей годовщины</span>
+        <h2 id="countdownTitle">Скоро снова праздник</h2>
+        <p class="countdown__date" id="countdownDate">11.11.2026</p>
+        <div class="countdown__grid" role="timer">
+          <div class="countdown__cell"><span data-cd="days">0</span><small data-cd-label="days">дней</small></div>
+          <div class="countdown__cell"><span data-cd="hours">00</span><small data-cd-label="hours">часов</small></div>
+          <div class="countdown__cell"><span data-cd="minutes">00</span><small data-cd-label="minutes">минут</small></div>
+          <div class="countdown__cell"><span data-cd="seconds">00</span><small data-cd-label="seconds">секунд</small></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. СКАЖИ ЧТО-ТО ВАЖНОЕ -->
+    <section class="section" id="important" aria-labelledby="importantTitle">
+      <div class="important card reveal">
+        <h2 id="importantTitle">Скажи что-то важное</h2>
+        <p>Нажми на кнопку — и из конвертика выпадет записка.</p>
+        <button class="btn btn--big" id="sayBtn" type="button">💌 Скажи что-то важное</button>
+        <div class="drop-zone" aria-live="polite">
+          <p class="drop-note" id="dropNote" hidden></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ФИНАЛ -->
+    <section class="final" id="final" aria-labelledby="finalTitle">
+      <div class="final__inner">
+        <p class="final__dates reveal">10 месяцев — с 11.12.2025 по 11.10.2026</p>
+        <h2 class="final__title reveal" id="finalTitle">И это только начало</h2>
+        <div class="final__video reveal" id="finalVideoWrap"></div>
+        <div class="final__words card reveal">
+          <p>Спасибо тебе за каждый день из этих десяти месяцев — за смех до слёз, за заботу, за поддержку в трудные дни и за то, что рядом с тобой даже самый обычный вторник становится праздником.</p>
+          <p>Ты — мой самый близкий человек, мой лучший друг и мой дом. Наша история только начинается, и я хочу писать её дальше — вместе с тобой.</p>
+          <p class="final__sign">Бесконечно твой ❤️</p>
+        </div>
+        <div class="final__buttons reveal">
+          <button class="btn" id="replayBtn" type="button">Смотреть снова</button>
+          <a class="btn btn--ghost" href="#hero">Наверх ↑</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 8. ФУТЕР -->
+  <footer class="footer">
+    <p class="footer__heart" aria-hidden="true">🦊 <span>♥</span> 🧸</p>
+    <p class="footer__title" data-site-title>История бесконечной любви, которая идёт 10 месяцев</p>
+    <p class="footer__dates">11.12.2025 — 11.10.2026 • 10 месяцев вместе</p>
+    <p class="footer__made">Сделано с теплом ❤️ для тебя</p>
+  </footer>
+
+  <button class="to-top" id="toTop" type="button" aria-label="Наверх">↑</button>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Просмотр" hidden>
+    <button class="lightbox__close" id="lightboxClose" type="button" aria-label="Закрыть">×</button>
+    <div class="lightbox__content" id="lightboxContent"></div>
+    <p class="lightbox__caption" id="lightboxCaption"></p>
+  </div>
+
+  <script src="script.js"></script>
+  <script src="player.js"></script>
+</body>
+</html>
